@@ -5,6 +5,14 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// cloudinary connection
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: 'dyukjqemj',
+  api_key: '975334944781146',
+  api_secret: 'USmTRR4C6ly_RDh-82Y8rhMIMzc',
+});
 
 // MongoDB Connection
 const MONGODB_USERNAME = encodeURIComponent(process.env.MONGODB_USERNAME);

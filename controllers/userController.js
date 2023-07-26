@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
 const config=require("../config/config");
 const jwt=require("jsonwebtoken");
+const fs = require('fs');
 const create_token=async(id,res)=>{
   try{
     const token=await jwt.sign({_id:id},config.secret_jwt);
@@ -20,29 +21,69 @@ const securePassword = async (password) => {
   }
 };
 
+// const register_user = async (req, res) => {
+//   try {
+//     const spassword = await securePassword(req.body.password);
+//     const user = new User({
+//       name: req.body.name,
+//       phone: req.body.phone,
+//       password: spassword,
+//       mobile:req.body.mobile,
+//       image: req.file.filename,
+//       type: req.body.type,
+//     });
+
+//     const userData = await User.findOne({ phone: req.body.phone });
+//     if (userData) {
+//       res.status(200).send({ success: false, msg: "This phone already exists" });
+//     } else {
+//       const user_data = await user.save();
+//       res.status(200).send({ success: true, data: user_data });
+//     }
+//   } catch (error) {
+//     res.status(400).send(error.message);
+//   }
+// };
+const cloudinary = require('cloudinary').v2;
+// const User = require('../models/userModel'); // Replace '../models/User' with the correct path to your User model
+
 const register_user = async (req, res) => {
   try {
     const spassword = await securePassword(req.body.password);
+
+    // Upload the user's image to Cloudinary
+    const imageResult = await cloudinary.uploader.upload(req.file.path);
+
     const user = new User({
       name: req.body.name,
       phone: req.body.phone,
       password: spassword,
-      mobile:req.body.mobile,
-      image: req.file.filename,
+      mobile: req.body.mobile,
+      image: imageResult.secure_url, // Store the Cloudinary URL in the 'image' field
       type: req.body.type,
     });
 
     const userData = await User.findOne({ phone: req.body.phone });
     if (userData) {
-      res.status(200).send({ success: false, msg: "This phone already exists" });
+      // Delete the temporary file uploaded with Multer
+      fs.unlinkSync(req.file.path);
+      return res.status(200).send({ success: false, msg: "This phone already exists" });
     } else {
       const user_data = await user.save();
-      res.status(200).send({ success: true, data: user_data });
+
+      // Delete the temporary file uploaded with Multer
+      fs.unlinkSync(req.file.path);
+
+      return res.status(200).send({ success: true, data: user_data });
     }
   } catch (error) {
-    res.status(400).send(error.message);
+    // Delete the temporary file uploaded with Multer in case of an error
+    fs.unlinkSync(req.file.path);
+    return res.status(400).send(error.message);
   }
 };
+
+
 const user_login = async (req, res) => {
   try {
     const phone = req.body.phone;

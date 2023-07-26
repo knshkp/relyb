@@ -1,0 +1,49 @@
+// const mongoose=require("mongoose");
+// const storeSchema=new mongoose.Schema({
+//     vendor_id:{
+//         type:String,
+//         required:true
+//     },
+//     logo:{
+//         type:String,
+//         required:true
+//     },
+//     name:{
+//         type:String,
+//         required:true
+//     },
+//     phone:{
+//         type:String,
+//         required:true
+//     },
+//     DOB:{
+//         type:String,
+//         required:true
+//     },
+//     BuisnessName:{
+//         type:String,
+//         required:true
+//     },
+//     BuisnessDesc:{
+//         type:String,
+//         required:true
+//     },
+//     BuisnessLocation:{
+//         type:String,
+//         required:true
+//     },
+//     pin:{
+//         type:String,
+//         required:true
+//     },
+//     ServiceLocation:{
+//         type:{type:String,required:true},
+//         cordinates:[]
+//     },
+//     BusinessEmail:{
+//         type:String,
+//         required:true
+//     }
+// });
+// storeSchema.index({ ServiceLocation: "2dsphere" });
+// module.exports = mongoose.model("Store", storeSchema);

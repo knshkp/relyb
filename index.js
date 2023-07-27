@@ -36,7 +36,7 @@ db.once('open', () => {
 const user_route = require('./routes/userRoutes'); // Remove the leading forward slash
 app.use('/user', user_route);
 const store_route = require('./routes/storeRoutes');
-app.use('/store', store_route);
+app.use('/partner', store_route);
 // Starting the server
 app.listen(PORT, () => {
   console.log(`Server is ready on port ${PORT}`);

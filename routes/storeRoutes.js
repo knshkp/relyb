@@ -1,30 +1,27 @@
-// const express = require("express");
-// const store_route = express();
-// const bodyParser = require("body-parser");
-// store_route.use(bodyParser.json());
-// store_route.use(bodyParser.urlencoded({ extended: true }));
-// const multer = require("multer");
-// const path = require("path");
-// store_route.use(express.static('public'));
+const express = require("express");
+const store_route = express();
+const bodyParser = require("body-parser");
+const multer = require("multer");
+const path = require("path");
 
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, path.join(__dirname, '../public/storeImages'));
-//     },
-//     filename: function (req, file, cb) {
-//         const name = Date.now() + '' + file.originalname;
-//         cb(null, name);
-//     }
-// });
+store_route.use(bodyParser.json());
+store_route.use(bodyParser.urlencoded({ extended: true }));
+store_route.use(express.static('public'));
 
-// const upload = multer({ storage: storage });
-// const auth = require("../middleware/auth");
-// const store_controller = require('../controllers/storeController');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../public/storeImages'));
+    },
+    filename: function (req, file, cb) {
+        const name = Date.now() + '-' + file.originalname;
+        cb(null, name);
+    }
+});
 
-// store_route.post('/create_store', upload.single('logo'), store_controller.create_store);
-// //                    ^--- Add a leading slash here before 'create_store'
+const upload = multer({ storage: storage });
+const auth = require('../middleware/auth');
+const store_controller = require('../controllers/storeController');
 
-// module.exports = {
-//     upload: store_route,
-//     // Other middleware functions if any
-//   };
+store_route.post('/create_store', auth, upload.single('logo'), store_controller.create_store);
+
+module.exports = store_route;

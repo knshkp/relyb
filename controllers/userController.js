@@ -45,8 +45,6 @@ const create_token=async(id,res)=>{
 //   }
 // };
 const cloudinary = require('cloudinary').v2;
-// const User = require('../models/userModel'); // Replace '../models/User' with the correct path to your User model
-
 const register_user = async (req, res) => {
   try {
     // const spassword = await securePassword(req.body.password);
@@ -66,19 +64,19 @@ const register_user = async (req, res) => {
     const userData = await User.findOne({ phone: req.body.phone });
     if (userData) {
       // Delete the temporary file uploaded with Multer
-      fs.unlinkSync(req.file.path);
+      // fs.unlinkSync(req.file.path);
       return res.status(200).send({ success: false, msg: "This phone already exists" });
     } else {
       const user_data = await user.save();
 
       // Delete the temporary file uploaded with Multer
-      fs.unlinkSync(req.file.path);
+      // fs.unlinkSync(req.file.path);
 
       return res.status(200).send({ success: true, data: user_data });
     }
   } catch (error) {
     // Delete the temporary file uploaded with Multer in case of an error
-    fs.unlinkSync(req.file.path);
+    // fs.unlinkSync(req.file.path);
     return res.status(400).send(error.message);
   }
 };

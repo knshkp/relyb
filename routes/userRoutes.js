@@ -25,5 +25,4 @@ const auth=require("../middleware/auth")
 user_route.get('/test',auth,function(req,res){
   res.status(200).send({success:true,msg:"Authenticated"})
 });
-// user_route.post('/update-password',auth,user_controller.update_password);
 module.exports = user_route;

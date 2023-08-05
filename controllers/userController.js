@@ -3,140 +3,129 @@ const bcryptjs = require("bcryptjs");
 const config=require("../config/config");
 const jwt=require("jsonwebtoken");
 const fs = require('fs');
-const create_token=async(id,res)=>{
-  try{
-    const token=await jwt.sign({_id:id},config.secret_jwt);
-    return token;
-  }
-  catch(error){
-    res.status(400).send(error.message);
-  }
-}
-// const securePassword = async (password) => {
-//   try {
-//     const passwordHash = await bcryptjs.hash(password, 10);
-//     return passwordHash;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// const register_user = async (req, res) => {
-//   try {
-//     const spassword = await securePassword(req.body.password);
-//     const user = new User({
-//       name: req.body.name,
-//       phone: req.body.phone,
-//       password: spassword,
-//       mobile:req.body.mobile,
-//       image: req.file.filename,
-//       type: req.body.type,
-//     });
-
-//     const userData = await User.findOne({ phone: req.body.phone });
-//     if (userData) {
-//       res.status(200).send({ success: false, msg: "This phone already exists" });
-//     } else {
-//       const user_data = await user.save();
-//       res.status(200).send({ success: true, data: user_data });
-//     }
-//   } catch (error) {
-//     res.status(400).send(error.message);
-//   }
-// };
 const cloudinary = require('cloudinary').v2;
-const register_user = async (req, res) => {
+
+// Configure Cloudinary with your API credentials
+cloudinary.config({
+  cloud_name: "dyukjqemj",
+  api_key: "975334944781146",
+  api_secret: "USmTRR4C6ly_RDh-82Y8rhMIMzc",
+});
+
+const uploadImageToCloudinary = async (imageFile) => {
   try {
-    // const spassword = await securePassword(req.body.password);
-
-    // Upload the user's image to Cloudinary
-    const imageResult = await cloudinary.uploader.upload(req.file.path);
-
-    const user = new User({
-      name: req.body.name,
-      phone: req.body.phone,
-      // password: spassword,
-      mobile: req.body.mobile,
-      image: imageResult.secure_url, // Store the Cloudinary URL in the 'image' field
-      type: req.body.type,
+    // Upload the image to Cloudinary
+    const result = await cloudinary.uploader.upload(imageFile, {
+ // Optional: You can specify a folder to organize your images
+      use_filename: true, // Keep the original filename
     });
 
-    const userData = await User.findOne({ phone: req.body.phone });
-    if (userData) {
-      // Delete the temporary file uploaded with Multer
-      // fs.unlinkSync(req.file.path);
-      return res.status(200).send({ success: false, msg: "This phone already exists" });
-    } else {
-      const user_data = await user.save();
-
-      // Delete the temporary file uploaded with Multer
-      // fs.unlinkSync(req.file.path);
-
-      return res.status(200).send({ success: true, data: user_data });
-    }
-  } catch (error) {
-    // Delete the temporary file uploaded with Multer in case of an error
-    // fs.unlinkSync(req.file.path);
-    return res.status(400).send(error.message);
+    // Cloudinary response will contain the image URL and other information
+    return result.url;
+  } 
+  catch (error) {
+    throw new Error('Image upload failed');
   }
 };
 
 
-const user_login = async (req, res) => {
+
+const updateUserInfo = async (req, res) => {
   try {
     const phone = req.body.phone;
-    // const password = req.body.password;
-    const userData = await User.findOne({ phone: req.body.phone });
-    if (userData) {
-      // const passwordMatch = await bcryptjs.compare(password, userData.password);
-        const token=await create_token(userData._id,res)
-        const userResult = {
-          _id: userData._id,
-          name: userData.name,
-          phone: userData.phone,
-          image: userData.image,
-          type: userData.type,
-          token:token
-        };
+    const name = req.body.name;
+    const image = req.body.image;
 
-        const response = {
-          success: true,
-          msg: "UserDetail",
-          data: userResult,
-        };
-        res.status(200).send(response);
-    } 
-    else {
-      res.status(200).send({success: false,msg: "Phone number is incorrect"});
+    // Find the user based on the provided phone number
+    const user = await User.findOne({ phone: phone });
+
+    console.log(phone);
+    if (!user) {
+      return res.status(400).send({ success: false, msg: "User not found" });
     }
+    let imageUrl = null;
+    if (image) {
+      imageUrl = await uploadImageToCloudinary(image.path);
+    }
+
+    // Update the user's name and image
+    user.name = name || user.name; // If name is provided, update it; otherwise, keep the existing name
+    user.image = imageUrl || user.image;; // If image is provided, update it; otherwise, keep the existing image
+
+    // Save the updated user
+    const updatedUser = await user.save();
+
+    // Prepare the response
+    const userResult = {
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      phone: updatedUser.phone,
+      image: updatedUser.image,
+      type: updatedUser.type,
+    };
+
+    const response = {
+      success: true,
+      msg: "User information updated successfully",
+      data: userResult,
+    };
+
+    res.status(200).send(response);
   } 
   catch (error) {
     res.status(400).send(error.message);
   }
 };
-// const update_password=async(req,res)=>{
-//   try {
-//     const user_id=req.body.user_id;
-//     const pswd=req.body.password;
-//     const data=await User.findOne({_id:user_id});
-//     if(data){
-//       const NewPassword=await securePassword(pswd);
-//       const UserData=await User.findByIdAndUpdate({_id:user_id},{$set:{
-//         pswd:NewPassword
-//     }});
-//     res.status(200).send({success:true,msg:"your password has been updated"});
-//     }
-//     else{
-//       res.status(200).send({success:false,msg:"User Id Not Found"});
-//     }
+const user_login = async (req, res) => {
+  try {
+    const phone = req.body.phone;
+    const userData = await User.findOne({ phone: phone });
 
-//   } 
-//   catch (error) {
-//     res.status(400).send(error.message);
-//   }
+    if (userData) {
+      // User exists, send user details
+      const userResult = {
+        _id: userData._id,
+        name: userData.name,
+        phone: userData.phone,
+        image: userData.image,
+        type: userData.type,
+      };
 
-// }
+      const response = {
+        success: true,
+        msg: "UserDetail",
+        data: userResult,
+      };
+      res.status(200).send(response);
+    } else {
+      // User does not exist, signup the user
+      const newUser = new User({
+        phone: phone,
+        // Add any other required fields for signup
+      });
+
+      const savedUser = await newUser.save();
+      const userResult = {
+        _id: savedUser._id,
+        name: savedUser.name,
+        phone: savedUser.phone,
+        image: savedUser.image,
+        type: savedUser.type,
+      };
+
+      const response = {
+        success: true,
+        msg: "User created successfully",
+        data: userResult,
+      };
+      res.status(200).send(response);
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
 module.exports = {
-  register_user,
   user_login,
+  updateUserInfo,
+  uploadImageToCloudinary
 };

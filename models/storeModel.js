@@ -1,9 +1,5 @@
 const mongoose=require("mongoose");
 const storeSchema=new mongoose.Schema({
-    vendor_id:{
-        type:String,
-        required:true
-    },
     name:{
         type:String,
         required:true

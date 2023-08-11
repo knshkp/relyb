@@ -22,6 +22,6 @@ const upload = multer({ storage: storage });
 const auth = require('../middleware/auth');
 const store_controller = require('../controllers/storeController');
 
-store_route.post('/create_partner', auth, upload.single('logo'), store_controller.create_store);
+store_route.post('/create_partner', upload.single('logo'), store_controller.create_store);
 
 module.exports = store_route;

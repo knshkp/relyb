@@ -39,6 +39,10 @@ const user_route = require('./routes/userRoutes'); // Remove the leading forward
 app.use('/user', user_route);
 const store_route = require('./routes/storeRoutes');
 app.use('/partner', store_route);
+const category_route=require('./routes/CategoryRoute')
+app.use('/api',category_route)
+const product_route=require('./routes/productRoute')
+app.use('/api',product_route)
 // Starting the server
 app.listen(PORT, () => {
   console.log(`Server is ready on port ${PORT}`);

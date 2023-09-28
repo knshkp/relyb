@@ -23,5 +23,5 @@ const auth = require('../middleware/auth');
 const store_controller = require('../controllers/storeController');
 
 store_route.post('/create_partner', upload.single('logo'), store_controller.create_store);
-
+store_route.post('/find_nearest_partner',store_controller.findNearestPartner);
 module.exports = store_route;

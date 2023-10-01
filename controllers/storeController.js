@@ -38,7 +38,7 @@ const getStorebyStoreId= async (req,res)=>{
   }
 const create_store = async (req, res) => {
   try {
-    const phone = req.body.phone;hf
+    const phone = req.body.phone;
     const vendorData = await Store.findOne({ phone: phone });
     if (vendorData){
       const vendorResult={
@@ -146,6 +146,7 @@ const findNearestPartner = async (req, res) => {
 }
 
 module.exports = {
+  getStorebyStoreId,
   create_store,
   findNearestPartner
 };

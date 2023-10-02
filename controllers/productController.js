@@ -7,7 +7,8 @@ const addProduct=async(req,res)=>{
             name:req.body.name,
             price:req.body.price,
             discount:req.body.discount,
-            category_id:req.body.category_id
+            category_id:req.body.category_id,
+            description:req.body.description
         })
         const productData=await product.save();
         res.status(200).send({success:true,msg:"Product Details",data:productData})
@@ -34,6 +35,7 @@ const getProduct = async (req, res) => {
                 "product_name": cat_pro[j]['name'],
                 "product_price": cat_pro[j]['price'],
                 "discount": cat_pro[j]['discount'],
+                "description":cat_pro[j]['description']
               });
             }
           }

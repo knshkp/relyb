@@ -17,7 +17,7 @@ var productSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    cat_id: {
+    category_id: {
         type: String,
         required: true
     }

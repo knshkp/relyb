@@ -23,7 +23,15 @@ const addCategory = async (req, res) => {
         res.status(400).send({ success: false, msg: "Error adding category", error: error.message });
     }
 };
+const getCategory=async(req,res)=>{
+    try {
+        return Category.find();
+    } catch (error) {
+        res.status(400).send({ success: false, msg: "Error getting category", error: error.message });
+    }
+}
 
 module.exports = {
-    addCategory
+    addCategory,
+    getCategory
 };

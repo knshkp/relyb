@@ -49,12 +49,28 @@ const getProduct = async (req, res) => {
         res.status(200).send({ success: false, msg: "No categories found", data: send_data });
       }
     } catch (error) {
-      console.error(error); // Log the error for debugging
       res.status(500).send({ success: false, msg: "Internal server error", data: send_data });
     }
   };
-  
+  const searchProduct=async(req,res)=>{
+    try {
+        var search=req.body.search;
+        var productData=await Product.find({
+            "name":{"$regex":".*"+search+".*"}
+        })
+        if(productData.length>0){
+            res.status(200).send({ success: true, msg: "Data found", data: productData });
+
+        }
+        else{
+            res.status(200).send({ success: true, msg: "Data not found" });
+        }
+    } catch (error) {
+        res.status(500).send({ success: false, msg: "Internal server error", data: send_data });
+    }
+    }
 module.exports={
     addProduct,
-    getProduct
+    getProduct,
+    searchProduct
 }

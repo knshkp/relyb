@@ -1,11 +1,21 @@
 const Product=require("../models/ProductModel")
 const categoryController=require("../controllers/categoryController")
+const cloudinary = require('cloudinary').v2;
+
+// Configure Cloudinary with your API credentials
+cloudinary.config({
+  cloud_name: "dyukjqemj",
+  api_key: "975334944781146",
+  api_secret: "USmTRR4C6ly_RDh-82Y8rhMIMzc",
+});
 const addProduct=async(req,res)=>{
+  const cloudinaryUpload = await cloudinary.uploader.upload(req.file.path);
     try {
         var product=new Product({
             vendor_id:req.body.vendor_id,
             name:req.body.name,
             price:req.body.price,
+            productImage: cloudinaryUpload.secure_url,
             discount:req.body.discount,
             category_id:req.body.category_id,
             description:req.body.description
@@ -35,7 +45,8 @@ const getProduct = async (req, res) => {
                 "product_name": cat_pro[j]['name'],
                 "product_price": cat_pro[j]['price'],
                 "discount": cat_pro[j]['discount'],
-                "description":cat_pro[j]['description']
+                "description":cat_pro[j]['description'],
+                "productImage":cat_pro[j]['productImage']
               });
             }
           }

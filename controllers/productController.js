@@ -12,7 +12,6 @@ const addProduct=async(req,res)=>{
   const cloudinaryUpload = await cloudinary.uploader.upload(req.file.path);
     try {
         var product=new Product({
-            vendor_id:req.body.vendor_id,
             name:req.body.name,
             price:req.body.price,
             productImage: cloudinaryUpload.secure_url,

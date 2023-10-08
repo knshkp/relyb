@@ -29,9 +29,7 @@ const addProduct=async(req,res)=>{
 const getProduct = async (req, res) => {
     try {
       var send_data = [];
-      var cat_data = await categoryController.getCategory(); // Await the getCategory function call
-      console.log(cat_data.length);
-  
+      var cat_data = await categoryController.getCategory();
       if (cat_data.length > 0) {
         for (let i = 0; i < cat_data.length; i++) {
           var product_data = [];
@@ -51,6 +49,7 @@ const getProduct = async (req, res) => {
           }
           send_data.push({
             "category": cat_data[i]['category'],
+            "categoryImage":cat_data[i]['categoryImage'],
             "product": product_data,
           });
         }

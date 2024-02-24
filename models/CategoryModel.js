@@ -7,6 +7,10 @@ const CategorySchema = mongoose.Schema({
     categoryImage:{
         type:String,
         required:true
+    },
+    bannerImage:{
+        type:String,
+        required:true
     }
 });
 module.exports=mongoose.model("category",CategorySchema)

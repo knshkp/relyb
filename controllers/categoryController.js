@@ -11,14 +11,19 @@ const addCategory = async (req, res) => {
     try {
         // Check if the category already exists
         const existingCategory = await Category.findOne({ category: req.body.category.toLowerCase() });
-        const cloudinaryUpload = await cloudinary.uploader.upload(req.file.path);
+
+        // Upload images to Cloudinary
+        const categoryImageUpload = await cloudinary.uploader.upload(req.files['categoryImage'][0].path);
+        const bannerImageUpload = await cloudinary.uploader.upload(req.files['bannerImage'][0].path);
+
         if (existingCategory) {
             res.status(200).send({ success: true, msg: "This Category is already Found" });
         } else {
             // Create a new category
             const category = new Category({
                 category: req.body.category.toLowerCase(),
-                categoryImage: cloudinaryUpload.secure_url
+                categoryImage: categoryImageUpload.secure_url,
+                bannerImage: bannerImageUpload.secure_url
             });
 
             // Save the new category
@@ -31,6 +36,7 @@ const addCategory = async (req, res) => {
         res.status(400).send({ success: false, msg: "Error adding category", error: error.message });
     }
 };
+
 const getCategory=async(req,res)=>{
     try {
         return Category.find();

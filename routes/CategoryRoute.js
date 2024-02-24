@@ -17,6 +17,14 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
-category_route.post('/add_category',upload.single('categoryImage'),category_controller.addCategory)
-category_route.get('/get_category',category_controller.getCategoryResult)
+category_route.post(
+    '/add_category',
+    upload.fields([
+      { name: 'categoryImage', maxCount: 1 }, // Handle single file upload for 'categoryImage'
+      { name: 'bannerImage', maxCount: 1 },   // Handle single file upload for 'bannerImage'
+      // Add more fields as needed
+    ]),
+    category_controller.addCategory
+  );
+  category_route.get('/get_category',category_controller.getCategoryResult)
 module.exports=category_route;

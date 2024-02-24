@@ -21,4 +21,7 @@ const upload = multer({ storage: storage });
 product_route.post('/add_product', upload.single('productImage'), product_controller.addProduct);
 product_route.get('/get_product',product_controller.getProduct)
 product_route.get('/search_product',product_controller.searchProduct)
+product_route.get('/get_product_price',product_controller.getProductViaPrice)
+product_route.get('/get_product_discount',product_controller.getProductViaDiscount)
+
 module.exports=product_route;
